@@ -34,6 +34,26 @@ module AdvancedRoadmap
           end
           totals
         end
+
+        def self.sort_versions(versions)
+          if versions.is_a? Array
+            versions.sort!{|a, b|
+              if !a.effective_date.nil? and !b.effective_date.nil?
+                a.effective_date <=> b.effective_date
+              elsif a.effective_date.nil? and !b.effective_date.nil?
+                1
+              elsif !a.effective_date.nil? and b.effective_date.nil?
+                -1
+              elsif a.rest_hours != b.rest_hours
+                a.rest_hours <=> b.rest_hours
+              else
+                a.name.downcase <=> b.name.downcase
+              end
+            }
+          else
+            versions.order([:effective_date, :rest_hours, :name])
+          end
+        end
       end
     end
 
@@ -156,26 +176,6 @@ module AdvancedRoadmap
 
     def parallel_speed_rest_hours
       speed_rest_hours / parallel_factor
-    end
-
-    def self.sort_versions(versions)
-      if versions.is_a? Array
-        versions.sort!{|a, b|
-          if !a.effective_date.nil? and !b.effective_date.nil?
-            a.effective_date <=> b.effective_date
-          elsif a.effective_date.nil? and !b.effective_date.nil?
-            1
-          elsif !a.effective_date.nil? and b.effective_date.nil?
-            -1
-          elsif a.rest_hours != b.rest_hours
-            a.rest_hours <=> b.rest_hours
-          else
-            a.name.downcase <=> b.name.downcase
-          end
-        }
-      else
-        versions.order([:effective_date, :rest_hours, :name])
-      end
     end
   end
 end
