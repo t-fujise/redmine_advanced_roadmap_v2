@@ -37,7 +37,7 @@ class MilestonesController < ApplicationController
   end
 
   def create
-    @milestone = @project.milestones.build(params[:milestone])
+    @milestone = @project.milestones.build(milestone_params)
     @milestone.user_id = User.current.id
     if request.post? and @milestone.save
       if params[:versions]
@@ -75,7 +75,7 @@ class MilestonesController < ApplicationController
         end
       end
     end
-    if @milestone.update_attributes(params[:milestone])
+    if @milestone.update_attributes(milestone_params)
       versions_to_delete.each do |version|
         milestone_version = MilestoneVersion.where("milestone_id = #{@milestone.id} AND version_id = #{version.id}").first
         milestone_version.destroy
@@ -118,35 +118,37 @@ class MilestonesController < ApplicationController
     send_data(g.to_blob, :type => "image/png", :disposition => "inline")
   end
 
-private
-
-  def find_project
-    @project = Project.find(params[:project_id])
-  rescue ActiveRecord::RecordNotFound
-    render_404
-  end
-
-  def find_milestone
-    @milestone = Milestone.find(params[:id])
-    @project = @milestone.project
-  rescue ActiveRecord::RecordNotFound
-    render_404
-  end
-
-  def graph_theme
-    {
-      :colors => ["#DB2626", "#6A6ADB", "#64D564", "#F727F7", "#EBEB20", "#303030", "#12ABAD", "#808080", "#B7580B", "#316211"],
-      :marker_color => "#AAAAAA",
-      :background_colors => ["#FFFFFF", "#FFFFFF"]
-    }
-  end
-
-  def retrieve_selected_tracker_ids(selectable_trackers, default_trackers=nil)
-    if ids = params[:tracker_ids]
-      @selected_tracker_ids = (ids.is_a? Array) ? ids.collect { |id| id.to_i.to_s } : ids.split('/').collect { |id| id.to_i.to_s }
-    else
-      @selected_tracker_ids = (default_trackers || selectable_trackers).collect {|t| t.id.to_s }
+  private
+    def find_project
+      @project = Project.find(params[:project_id])
+    rescue ActiveRecord::RecordNotFound
+      render_404
     end
-  end
 
+    def find_milestone
+      @milestone = Milestone.find(params[:id])
+      @project = @milestone.project
+    rescue ActiveRecord::RecordNotFound
+      render_404
+    end
+
+    def milestone_params
+      params.require(:milestone).permit(:name, :description, :effective_date)
+    end
+
+    def graph_theme
+      {
+        :colors => ["#DB2626", "#6A6ADB", "#64D564", "#F727F7", "#EBEB20", "#303030", "#12ABAD", "#808080", "#B7580B", "#316211"],
+        :marker_color => "#AAAAAA",
+        :background_colors => ["#FFFFFF", "#FFFFFF"]
+      }
+    end
+
+    def retrieve_selected_tracker_ids(selectable_trackers, default_trackers=nil)
+      if ids = params[:tracker_ids]
+        @selected_tracker_ids = (ids.is_a? Array) ? ids.collect { |id| id.to_i.to_s } : ids.split('/').collect { |id| id.to_i.to_s }
+      else
+        @selected_tracker_ids = (default_trackers || selectable_trackers).collect {|t| t.id.to_s }
+      end
+    end
 end
