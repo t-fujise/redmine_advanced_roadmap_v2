@@ -6,6 +6,34 @@ module AdvancedRoadmap
       base.class_eval do
         has_many :milestone_versions, :dependent => :destroy
         has_many :milestones, :through => :milestone_versions
+
+        def self.calculate_totals(versions)
+          totals = {}
+          totals[:estimated_hours] = 0.0
+          totals[:spent_hours] = 0.0
+          totals[:rest_hours] = 0.0
+          totals[:speed_rest_hours] = 0.0
+          totals[:parallel_rest_hours] = 0.0
+          totals[:parallel_speed_rest_hours] = 0.0
+          totals[:completed_percent] = 0.0
+          totals[:closed_percent] = 0.0
+          versions.each do |version|
+            totals[:estimated_hours] += version.estimated_hours
+            totals[:spent_hours] += version.spent_hours
+            totals[:rest_hours] += version.rest_hours
+            totals[:speed_rest_hours] += version.speed_rest_hours
+            totals[:parallel_rest_hours] += version.parallel_rest_hours
+            totals[:parallel_speed_rest_hours] += version.parallel_speed_rest_hours
+            totals[:completed_percent] += version.spent_hours
+            totals[:closed_percent] += version.closed_spent_hours
+          end
+          totals[:total] = totals[:spent_hours] + totals[:rest_hours]
+          if totals[:total] > 0.0
+            totals[:completed_percent] = (totals[:completed_percent] * 100.0) / totals[:total]
+            totals[:closed_percent] = (totals[:closed_percent] * 100.0) / totals[:total]
+          end
+          totals
+        end
       end
     end
 
@@ -148,34 +176,6 @@ module AdvancedRoadmap
       else
         versions.order([:effective_date, :rest_hours, :name])
       end
-    end
-
-    def self.calculate_totals(versions)
-      totals = {}
-      totals[:estimated_hours] = 0.0
-      totals[:spent_hours] = 0.0
-      totals[:rest_hours] = 0.0
-      totals[:speed_rest_hours] = 0.0
-      totals[:parallel_rest_hours] = 0.0
-      totals[:parallel_speed_rest_hours] = 0.0
-      totals[:completed_percent] = 0.0
-      totals[:closed_percent] = 0.0
-      versions.each do |version|
-        totals[:estimated_hours] += version.estimated_hours
-        totals[:spent_hours] += version.spent_hours
-        totals[:rest_hours] += version.rest_hours
-        totals[:speed_rest_hours] += version.speed_rest_hours
-        totals[:parallel_rest_hours] += version.parallel_rest_hours
-        totals[:parallel_speed_rest_hours] += version.parallel_speed_rest_hours
-        totals[:completed_percent] += version.spent_hours
-        totals[:closed_percent] += version.closed_spent_hours
-      end
-      totals[:total] = totals[:spent_hours] + totals[:rest_hours]
-      if totals[:total] > 0.0
-        totals[:completed_percent] = (totals[:completed_percent] * 100.0) / totals[:total]
-        totals[:closed_percent] = (totals[:closed_percent] * 100.0) / totals[:total]
-      end
-      totals
     end
   end
 end
