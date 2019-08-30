@@ -4,32 +4,32 @@ module AdvancedRoadmap
   module VersionPatch
     def self.included(base)
       base.class_eval do
-  
+
         has_many :milestone_versions, :dependent => :destroy
         has_many :milestones, :through => :milestone_versions
-  
+
         def completed_percent_with_advanced_info
           calculate_advance_info unless @total_ratio
           @total_ratio
         end
-        alias_method_chain :completed_percent, :advanced_info
-  
+        # alias_method_chain :completed_percent, :advanced_info
+
         def closed_percent_with_advanced_info
           calculate_advance_info unless @total_finished_ratio
           @total_finished_ratio
         end
-        alias_method_chain :closed_percent, :advanced_info
-  
+        # alias_method_chain :closed_percent, :advanced_info
+
         def rest_hours
           calculate_advance_info unless @total_pending
           @total_pending
         end
-  
+
         def estimated_speed
           calculate_advance_info unless @progress_factor
           @progress_factor
         end
-  
+
         def closed_spent_hours
           if !@closed_spent_hours
             @closed_spent_hours = 0.0
@@ -41,7 +41,7 @@ module AdvancedRoadmap
           end
           @closed_spent_hours
         end
-  
+
         def calculate_advance_info
           total_estimated = 0.0
           total_spent = 0.0
@@ -97,7 +97,7 @@ module AdvancedRoadmap
             end
           end
         end
-  
+
         def sorted_fixed_issues(options = {})
           issues = []
           conditions = {:parent_id => options[:parent]}
@@ -111,25 +111,25 @@ module AdvancedRoadmap
           end
           issues
         end
-  
+
         def parallel_factor
           factor = 1.0
           factor
         end
-  
+
         def parallel_rest_hours
           rest_hours / parallel_factor
         end
-  
+
         def speed_rest_hours
           calculate_advance_info unless @total_speed_pending
           @total_speed_pending
         end
-  
+
         def parallel_speed_rest_hours
           speed_rest_hours / parallel_factor
         end
-  
+
         def self.sort_versions(versions)
           if versions.is_a? Array
             versions.sort!{|a, b|
@@ -149,7 +149,7 @@ module AdvancedRoadmap
             versions.order([:effective_date, :rest_hours, :name])
           end
         end
-        
+
         def self.calculate_totals(versions)
           totals = {}
           totals[:estimated_hours] = 0.0
@@ -177,7 +177,7 @@ module AdvancedRoadmap
           end
           totals
         end
-        
+
       end
     end
   end

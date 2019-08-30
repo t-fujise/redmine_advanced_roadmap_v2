@@ -4,7 +4,7 @@ module AdvancedRoadmap
   module VersionsControllerPatch
     def self.included(base)
       base.class_eval do
-  
+
         def index_with_plugin
           index_without_plugin
           @totals = Version.calculate_totals(@versions)
@@ -15,12 +15,12 @@ module AdvancedRoadmap
           end if params[:only_open]
 
         end
-        alias_method_chain :index, :plugin
-  
+        # alias_method_chain :index, :plugin
+
         def show
           @issues = @version.sorted_fixed_issues
         end
-      
+
       end
     end
   end

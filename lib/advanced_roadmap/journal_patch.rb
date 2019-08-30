@@ -6,8 +6,8 @@ module AdvancedRoadmap
         base.send(:include, InstanceMethods)
 
         base.class_eval do
-          alias_method_chain :visible_details, :estimated_time_hidden
-        end 
+          # alias_method_chain :visible_details, :estimated_time_hidden
+        end
       end
     end
 
