@@ -12,14 +12,14 @@ require "gravatar"
 ApplicationHelper.send(:include, AdvancedRoadmap::ApplicationHelperPatch)
 CalendarsController.send(:include, AdvancedRoadmap::CalendarsControllerPatch)
 Issue.send(:include, AdvancedRoadmap::IssuePatch)
-Journal.send(:include, AdvancedRoadmap::JournalPatch)
+Journal.prepend AdvancedRoadmap::JournalPatch
 Project.send(:include, AdvancedRoadmap::ProjectPatch)
-ProjectsHelper.send(:include, AdvancedRoadmap::ProjectsHelperPatch)
+ProjectsHelper.prepend AdvancedRoadmap::ProjectsHelperPatch
 Query.send(:include, AdvancedRoadmap::QueryPatch)
-Redmine::Helpers::Gantt.send(:include, AdvancedRoadmap::RedmineHelpersGanttPatch)
+Redmine::Helpers::Gantt.prepend AdvancedRoadmap::RedmineHelpersGanttPatch
 Redmine::I18n.send(:include, AdvancedRoadmap::RedmineI18nPatch)
-Version.send(:include, AdvancedRoadmap::VersionPatch)
-VersionsController.send(:include, AdvancedRoadmap::VersionsControllerPatch)
+Version.prepend AdvancedRoadmap::VersionPatch
+VersionsController.prepend AdvancedRoadmap::VersionsControllerPatch
 
 require_dependency "advanced_roadmap/view_hooks"
 
