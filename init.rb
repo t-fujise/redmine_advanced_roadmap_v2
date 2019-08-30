@@ -14,7 +14,7 @@ CalendarsController.send(:include, AdvancedRoadmap::CalendarsControllerPatch)
 Issue.send(:include, AdvancedRoadmap::IssuePatch)
 Journal.prepend AdvancedRoadmap::JournalPatch
 Project.send(:include, AdvancedRoadmap::ProjectPatch)
-ProjectsHelper.prepend AdvancedRoadmap::ProjectsHelperPatch
+ProjectsHelper.send(:include, AdvancedRoadmap::ProjectsHelperPatch)
 Query.send(:include, AdvancedRoadmap::QueryPatch)
 Redmine::Helpers::Gantt.prepend AdvancedRoadmap::RedmineHelpersGanttPatch
 Redmine::I18n.send(:include, AdvancedRoadmap::RedmineI18nPatch)
